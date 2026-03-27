@@ -1,236 +1,663 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pfannenofen Schlacken Assistent</title>
-
-<style>
-body{font-family:Arial;background:#0f172a;color:white;margin:0;padding:20px}
-.card{background:#111827;border-radius:14px;padding:18px;margin-bottom:16px;border:1px solid #374151}
-h1,h2{margin-top:0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #374151;background:#020617;color:white}
-.result{font-size:22px;font-weight:bold;color:#86efac;margin-top:4px}
-.small{color:#9ca3af;font-size:13px}
-img{max-width:100%;border-radius:10px;border:1px solid #374151;margin-top:10px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pfannenofen Schlacken Assistent</title>
+  <style>
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:#0f172a;
+      color:white;
+      margin:0;
+      padding:20px
+    }
+    .card{
+      background:#111827;
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:16px;
+      border:1px solid #374151
+    }
+    h1,h2,h3{margin-top:0}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:10px
+    }
+    input,select,textarea{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #374151;
+      background:#020617;
+      color:white;
+      box-sizing:border-box
+    }
+    .result{
+      font-size:24px;
+      font-weight:bold;
+      color:#86efac;
+      margin-top:4px
+    }
+    .small{
+      color:#9ca3af;
+      font-size:13px
+    }
+    .label{
+      font-size:14px;
+      color:#cbd5e1;
+      margin-bottom:4px
+    }
+    img{
+      max-width:100%;
+      border-radius:10px;
+      border:1px solid #374151;
+      margin-top:10px
+    }
+    .ampel{
+      font-size:22px;
+      font-weight:bold;
+      margin-top:8px
+    }
+    .ok{color:#86efac}
+    .warn{color:#fbbf24}
+    .bad{color:#f87171}
+    .note{
+      white-space:pre-line;
+      line-height:1.45
+    }
+    .table-wrap{overflow-x:auto}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#020617;
+      color:#fff
+    }
+    th,td{
+      border:1px solid #374151;
+      padding:8px;
+      text-align:left
+    }
+    th{background:#1f2937}
+    td:nth-child(2),td:nth-child(3){
+      color:#86efac;
+      font-weight:bold
+    }
+    .button-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px
+    }
+    .app-btn{
+      background:#22c55e;
+      color:#04130a;
+      border:none;
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:bold;
+      cursor:pointer
+    }
+    .app-btn.secondary{
+      background:#334155;
+      color:#fff
+    }
+    .info-box{
+      margin-top:10px;
+      color:#9ca3af;
+      font-size:13px;
+      white-space:pre-line
+    }
+    .hidden-canvas{
+      display:none
+    }
+    .muted{
+      opacity:0.9
+    }
+    .mono{
+      font-family:monospace
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="card">
-<h1>Pfannenofen Schlacken Assistent</h1>
-<p class="small">B2 Ziel: 1.8 Stückverzinker | 1.6 Normal | +500 kg Schlackenmittlauf</p>
+  <h1>Pfannenofen<br>Schlacken Assistent</h1>
+  <p class="small">B2 Ziel: 1.8 Stückverzinker | 1.6 Normal | +500 kg Schlackenmittlauf</p>
 </div>
 
 <div class="card">
-<h2>Konverter Zugaben</h2>
-<div class="grid">
+  <h2>Konverter Zugaben</h2>
+  <div class="grid">
+    <div>
+      <div class="label">Sulfex (kg)</div>
+      <input id="sulfex" type="number" value="0" oninput="calcConverter()">
+    </div>
+    <div>
+      <div class="label">ADL Kalk (kg)</div>
+      <input id="adl" type="number" value="0" oninput="calcConverter()">
+    </div>
+    <div>
+      <div class="label">D75 (kg)</div>
+      <input id="d75" type="number" value="0" oninput="calcConverter()">
+    </div>
+    <div>
+      <div class="label">TLS35 (kg)</div>
+      <input id="tls" type="number" value="0" oninput="calcConverter()">
+    </div>
+  </div>
 
-<div>
-<label>Sulfex (kg)</label>
-<input id="sulfex" type="number" value="0" oninput="calcConverter()">
-</div>
-
-<div>
-<label>ADL Kalk (kg)</label>
-<input id="adl" type="number" value="0" oninput="calcConverter()">
-</div>
-
-<div>
-<label>D75 (kg)</label>
-<input id="d75" type="number" value="0" oninput="calcConverter()">
-</div>
-
-<div>
-<label>TLS35 (kg)</label>
-<input id="tls" type="number" value="0" oninput="calcConverter()">
-</div>
-
-</div>
-
-<p class="small">Pfannenofen Empfehlung</p>
-
-CAS-35
-<div id="cas_conv" class="result">0 kg</div>
-
-Kalk
-<div id="kalk_conv" class="result">0 kg</div>
-
+  <p class="small" style="margin-top:16px">Pfannenofen Empfehlung</p>
+  <div>CAS-35</div>
+  <div id="cas_conv" class="result">650 kg</div>
+  <div style="margin-top:10px">Kalk</div>
+  <div id="kalk_conv" class="result">1405 kg</div>
+  <div id="conv_info" class="info-box"></div>
 </div>
 
 <div class="card">
-<h2>Schlackenprobe Foto</h2>
-<input type="file" accept="image/*" onchange="showPhoto(event)">
-<img id="photo" style="display:none;">
+  <h2>Sulfex Tabelle</h2>
+  <div class="small">Sulfex enthält 70 % CaO und 15 % Al2O3</div>
+  <div class="table-wrap" style="margin-top:10px">
+    <table>
+      <thead>
+        <tr>
+          <th>Sulfex (kg)</th>
+          <th>CaO (kg)</th>
+          <th>Al2O3 (kg)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>100</td><td>70</td><td>15</td></tr>
+        <tr><td>200</td><td>140</td><td>30</td></tr>
+        <tr><td>300</td><td>210</td><td>45</td></tr>
+        <tr><td>400</td><td>280</td><td>60</td></tr>
+        <tr><td>500</td><td>350</td><td>75</td></tr>
+        <tr><td>650</td><td>455</td><td>97,5</td></tr>
+        <tr><td>800</td><td>560</td><td>120</td></tr>
+        <tr><td>1000</td><td>700</td><td>150</td></tr>
+        <tr><td>1200</td><td>840</td><td>180</td></tr>
+        <tr><td>1500</td><td>1050</td><td>225</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div class="card">
-<h2>Schlackenprobe Werte</h2>
-
-<div class="grid">
-
-<div>
-<label>CaO %</label>
-<input id="cao" type="number" value="45" oninput="calcSlag()">
+  <h2>CAS-35 Tabelle</h2>
+  <div class="small">CAS-35 enthält 30 % CaO und 50 % Al2O3</div>
+  <div class="table-wrap" style="margin-top:10px">
+    <table>
+      <thead>
+        <tr>
+          <th>CAS-35 (kg)</th>
+          <th>CaO (kg)</th>
+          <th>Al2O3 (kg)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>100</td><td>30</td><td>50</td></tr>
+        <tr><td>200</td><td>60</td><td>100</td></tr>
+        <tr><td>300</td><td>90</td><td>150</td></tr>
+        <tr><td>400</td><td>120</td><td>200</td></tr>
+        <tr><td>500</td><td>150</td><td>250</td></tr>
+        <tr><td>650</td><td>195</td><td>325</td></tr>
+        <tr><td>800</td><td>240</td><td>400</td></tr>
+        <tr><td>1000</td><td>300</td><td>500</td></tr>
+        <tr><td>1200</td><td>360</td><td>600</td></tr>
+        <tr><td>1500</td><td>450</td><td>750</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box">Nur als Spickzettel. Diese Tabellen werden nicht in die Berechnung einbezogen.</div>
 </div>
 
-<div>
-<label>SiO2 %</label>
-<input id="sio2" type="number" value="25" oninput="calcSlag()">
+<div class="card">
+  <h2>Schlackenprobe Foto</h2>
+  <input id="foto" type="file" accept="image/*" onchange="showPhoto(event)">
+  <div class="button-row">
+    <button class="app-btn secondary" onclick="analysePhotoUndDirektAuswerten()">📸 Foto auswerten</button>
+  </div>
+  <img id="photo" style="display:none;">
+  <canvas id="ocrCanvas" class="hidden-canvas"></canvas>
+  <div id="photoInfo" class="info-box"></div>
 </div>
 
-<div>
-<label>Al2O3 %</label>
-<input id="al2o3" type="number" value="8" oninput="calcSlag()">
+<div class="card">
+  <h2>Ausgewertete Daten vom Foto</h2>
+  <div class="small">Die OCR trägt die erkannten Werte hier automatisch ein. Danach werden sie direkt in die Schlackenprobe übernommen und ausgewertet.</div>
+  <div class="grid" style="margin-top:12px">
+    <div><div class="label">CaO %</div><input id="foto_cao" type="text" value=""></div>
+    <div><div class="label">SiO2 %</div><input id="foto_sio2" type="text" value=""></div>
+    <div><div class="label">Al2O3 %</div><input id="foto_al2o3" type="text" value=""></div>
+    <div><div class="label">FeO / Fe %</div><input id="foto_feo" type="text" value=""></div>
+    <div><div class="label">MnO %</div><input id="foto_mno" type="text" value=""></div>
+    <div><div class="label">MgO %</div><input id="foto_mgo" type="text" value=""></div>
+  </div>
+  <div class="button-row">
+    <button class="app-btn" onclick="uebernehmeFotoDaten()">📥 Fotodaten in Schlackenprobe übernehmen</button>
+    <button class="app-btn secondary" onclick="analyseFotoDirekt()">🚀 Foto direkt für Empfehlung auswerten</button>
+  </div>
+  <div id="fotoDataInfo" class="info-box"></div>
+  <details style="margin-top:10px">
+    <summary class="small">OCR-Text anzeigen</summary>
+    <textarea id="ocrTextDump" rows="8" class="mono muted"></textarea>
+  </details>
 </div>
 
-<div>
-<label>Qualität</label>
-<select id="quality" onchange="calcSlag()">
-<option value="normal">Normal</option>
-<option value="stueck">Stückverzinker</option>
-</select>
+<div class="card">
+  <h2>Schlackenprobe Werte</h2>
+  <div class="grid">
+    <div><div class="label">CaO %</div><input id="cao" type="number" step="0.01" value="45"></div>
+    <div><div class="label">SiO2 %</div><input id="sio2" type="number" step="0.01" value="25"></div>
+    <div><div class="label">Al2O3 %</div><input id="al2o3" type="number" step="0.01" value="8"></div>
+    <div><div class="label">FeO %</div><input id="feo" type="number" step="0.01" value="1.0"></div>
+    <div><div class="label">MnO %</div><input id="mno" type="number" step="0.01" value="1.0"></div>
+    <div><div class="label">MgO %</div><input id="mgo" type="number" step="0.01" value="6.0"></div>
+    <div>
+      <div class="label">Qualität</div>
+      <select id="qualitySlag">
+        <option value="normal">Kein Stückverzinker</option>
+        <option value="stueck">Stückverzinker</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="button-row">
+    <button class="app-btn" onclick="analyseSlag()">🧠 Schlackenanalyse auswerten</button>
+  </div>
 </div>
 
+<div class="card">
+  <h2>Auswertung</h2>
+  <div class="grid">
+    <div>
+      <div class="label">B2 (CaO / Al2O3)</div>
+      <div id="b2Value" class="result">0.00</div>
+    </div>
+    <div>
+      <div class="label">FeO + MnO</div>
+      <div id="feMnValue" class="result">0.00</div>
+    </div>
+    <div>
+      <div class="label">Empfohlenes CAS-35</div>
+      <div id="cas_empf" class="result">0 kg</div>
+    </div>
+    <div>
+      <div class="label">Empfohlener Kalk</div>
+      <div id="kalk_empf" class="result">0 kg</div>
+    </div>
+  </div>
+
+  <div id="ampel" class="ampel warn">Noch nicht ausgewertet</div>
+  <div id="analysisNote" class="note small" style="margin-top:12px"></div>
 </div>
 
-<p>B2 Basizität</p>
-<div id="b2" class="result">0</div>
-
-<div id="slagstatus" class="small"></div>
-
-<p class="small">Empfehlung Schlackenbildner</p>
-
-CAS-35
-<div id="cas_slag" class="result">0 kg</div>
-
-Kalk
-<div id="kalk_slag" class="result">0 kg</div>
-
+<div class="card">
+  <h2>Oxid Übersicht</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Ist</th>
+          <th>Ziel</th>
+          <th>Bewertung</th>
+        </tr>
+      </thead>
+      <tbody id="oxideTableBody"></tbody>
+    </table>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
+function num(id){
+  const el = document.getElementById(id);
+  if(!el) return 0;
+  const val = String(el.value).replace(",", ".").trim();
+  const n = parseFloat(val);
+  return isNaN(n) ? 0 : n;
+}
 
-const stoffe={
-sulfex:{cao:0.70,al:0.15},
-adl:{cao:0.70,al:0},
-d75:{cao:0.65,al:0},
-tls:{cao:0.60,al:0.10},
-cas:{cao:0.30,al:0.50}
+function formatKg(n){
+  return Math.round(n) + " kg";
+}
+
+function showPhoto(event){
+  const file = event.target.files[0];
+  const img = document.getElementById("photo");
+  const info = document.getElementById("photoInfo");
+
+  if(!file){
+    img.style.display = "none";
+    info.innerText = "Kein Foto ausgewählt.";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    img.src = e.target.result;
+    img.style.display = "block";
+    info.innerText = "Foto geladen. Jetzt auf „Foto auswerten“ drücken.";
+  };
+  reader.readAsDataURL(file);
 }
 
 function calcConverter(){
+  const sulfex = num("sulfex");
+  const adl = num("adl");
+  const d75 = num("d75");
+  const tls = num("tls");
 
-const sulfex=parseFloat(document.getElementById("sulfex").value)||0
-const adl=parseFloat(document.getElementById("adl").value)||0
-const d75=parseFloat(document.getElementById("d75").value)||0
-const tls=parseFloat(document.getElementById("tls").value)||0
+  let cas = 650;
+  let kalk = 1405;
 
-let cao=
-sulfex*stoffe.sulfex.cao+
-adl*stoffe.adl.cao+
-d75*stoffe.d75.cao+
-tls*stoffe.tls.cao
+  cas += sulfex * 0.20;
+  cas += adl * 0.15;
+  cas -= tls * 0.10;
+  cas -= d75 * 0.05;
 
-let al=
-sulfex*stoffe.sulfex.al+
-tls*stoffe.tls.al
+  kalk += d75 * 0.70;
+  kalk += adl * 0.25;
+  kalk -= tls * 0.15;
+  kalk -= sulfex * 0.10;
 
-const targetAl=325
+  if(cas < 0) cas = 0;
+  if(kalk < 0) kalk = 0;
 
-let cas=(targetAl-al)/stoffe.cas.al
-if(cas<0)cas=0
-
-let caoCas=cas*stoffe.cas.cao
-
-const targetCao=1600
-
-let kalk=(targetCao-cao-caoCas)
-if(kalk<0)kalk=0
-
-document.getElementById("cas_conv").innerText=Math.round(cas)+" kg"
-document.getElementById("kalk_conv").innerText=Math.round(kalk)+" kg"
-
+  document.getElementById("cas_conv").innerText = formatKg(cas);
+  document.getElementById("kalk_conv").innerText = formatKg(kalk);
+  document.getElementById("conv_info").innerText =
+    "Berechnung mit gespeicherter Grundlogik und 500 kg Schlackenmittlauf.";
 }
 
-function calcSlag(){
+function loadImageFromFile(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
 
-const cao=parseFloat(document.getElementById("cao").value)||0
-const sio2=parseFloat(document.getElementById("sio2").value)||1
-const al=parseFloat(document.getElementById("al2o3").value)||0
-const quality=document.getElementById("quality").value
+    reader.onload = function(e){
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
 
-let b2=cao/sio2
-
-document.getElementById("b2").innerText=b2.toFixed(2)
-
-let target=quality==="stueck"?1.8:1.6
-
-let text=""
-let cas=0
-let kalk=0
-
-if(b2<target){
-
-text="Schlacke zu sauer → nachfahren nötig"
-
-let neededCaO=(target*sio2)-cao
-
-let neededAl=10-al
-
-if(neededAl<0)neededAl=0
-
-cas=neededAl/stoffe.cas.al
-
-let caoCas=cas*stoffe.cas.cao
-
-let rest=neededCaO-caoCas
-if(rest<0)rest=0
-
-kalk=rest/0.70*100
-
-}else{
-
-text="Schlacke im Zielbereich"
-
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-document.getElementById("slagstatus").innerText=text
+async function prepareImageForOCR(file){
+  const img = await loadImageFromFile(file);
+  const canvas = document.getElementById("ocrCanvas");
+  const ctx = canvas.getContext("2d");
 
-document.getElementById("cas_slag").innerText=Math.round(cas)+" kg"
-document.getElementById("kalk_slag").innerText=Math.round(kalk)+" kg"
+  const maxWidth = 1800;
+  const scale = Math.min(1, maxWidth / img.width);
+  canvas.width = Math.max(1, Math.round(img.width * scale));
+  canvas.height = Math.max(1, Math.round(img.height * scale));
 
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  for(let i = 0; i < data.length; i += 4){
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+
+    let gray = 0.299 * r + 0.587 * g + 0.114 * b;
+    gray = gray > 165 ? 255 : 0;
+
+    data[i] = gray;
+    data[i + 1] = gray;
+    data[i + 2] = gray;
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvas;
 }
 
-function showPhoto(e){
+async function analysePhotoUndDirektAuswerten(){
+  const foto = document.getElementById("foto");
+  const photoInfo = document.getElementById("photoInfo");
+  const fotoDataInfo = document.getElementById("fotoDataInfo");
+  const ocrDump = document.getElementById("ocrTextDump");
 
-const file=e.target.files[0]
-if(!file)return
+  if(!foto.files || !foto.files[0]){
+    photoInfo.innerText = "Noch kein Foto ausgewählt.";
+    return;
+  }
 
-const reader=new FileReader()
+  const file = foto.files[0];
+  photoInfo.innerText = "Foto wird erkannt...";
+  fotoDataInfo.innerText = "";
+  ocrDump.value = "";
 
-reader.onload=function(ev){
+  try{
+    const preparedCanvas = await prepareImageForOCR(file);
 
-const img=document.getElementById("photo")
-img.src=ev.target.result
-img.style.display="block"
+    const result = await Tesseract.recognize(preparedCanvas, "deu+eng", {
+      logger: m => {
+        if(m && m.status){
+          photoInfo.innerText = "Foto wird erkannt... " + Math.round((m.progress || 0) * 100) + "%";
+        }
+      }
+    });
 
+    const text = (result.data.text || "").replace(/\r/g, "\n");
+    ocrDump.value = text;
+
+    const werte = extrahiereSchlackenWerte(text);
+
+    document.getElementById("foto_cao").value = werte.cao || "";
+    document.getElementById("foto_sio2").value = werte.sio2 || "";
+    document.getElementById("foto_al2o3").value = werte.al2o3 || "";
+    document.getElementById("foto_feo").value = werte.feo || "";
+    document.getElementById("foto_mno").value = werte.mno || "";
+    document.getElementById("foto_mgo").value = werte.mgo || "";
+
+    uebernehmeFotoDaten();
+    analyseSlag();
+
+    const missing = [];
+    if(!werte.cao) missing.push("CaO");
+    if(!werte.sio2) missing.push("SiO2");
+    if(!werte.al2o3) missing.push("Al2O3");
+    if(!werte.feo) missing.push("FeO/Fe");
+    if(!werte.mno) missing.push("MnO");
+    if(!werte.mgo) missing.push("MgO");
+
+    if(missing.length === 0){
+      photoInfo.innerText = "Foto erfolgreich erkannt.";
+      fotoDataInfo.innerText = "Fotodaten wurden automatisch übernommen und direkt ausgewertet.";
+    }else{
+      photoInfo.innerText = "Foto teilweise erkannt.";
+      fotoDataInfo.innerText =
+        "Erkannt und ausgewertet. Nicht sicher erkannt: " + missing.join(", ") + ". Diese Felder ggf. kurz prüfen.";
+    }
+  }catch(err){
+    console.error(err);
+    photoInfo.innerText = "Fehler bei der Foto-Erkennung.";
+    fotoDataInfo.innerText = "OCR konnte das Bild nicht sauber lesen.";
+  }
 }
 
-reader.readAsDataURL(file)
+function extrahiereSchlackenWerte(text){
+  const clean = (text || "")
+    .replace(/\r/g, "\n")
+    .replace(/,/g, ".")
+    .replace(/[|]/g, " ")
+    .replace(/[ ]+/g, " ")
+    .replace(/\n+/g, "\n");
 
+  const lines = clean
+    .split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  function findValue(labelList){
+    for(const rawLine of lines){
+      const line = rawLine.replace(/\s+/g, " ").trim();
+
+      for(const label of labelList){
+        const exactRegex = new RegExp("^" + label + "\\s+([0-9]+(?:\\.[0-9]+)?)$", "i");
+        const m1 = line.match(exactRegex);
+        if(m1) return m1[1].replace(".", ",");
+
+        const looseRegex = new RegExp(label + "\\s+([0-9]+(?:\\.[0-9]+)?)", "i");
+        const m2 = line.match(looseRegex);
+        if(m2) return m2[1].replace(".", ",");
+      }
+    }
+    return "";
+  }
+
+  return {
+    feo: findValue(["FeO","Fe"]),
+    mno: findValue(["MnO"]),
+    sio2: findValue(["SiO2","SIO2","Si02"]),
+    al2o3: findValue(["Al2O3","AL2O3","A12O3","ALO3"]),
+    cao: findValue(["CaO","CAO"]),
+    mgo: findValue(["MgO","MGO"])
+  };
 }
 
-window.onload=function(){
+function uebernehmeFotoDaten(){
+  document.getElementById("cao").value = String(document.getElementById("foto_cao").value).replace(",", ".");
+  document.getElementById("sio2").value = String(document.getElementById("foto_sio2").value).replace(",", ".");
+  document.getElementById("al2o3").value = String(document.getElementById("foto_al2o3").value).replace(",", ".");
+  document.getElementById("feo").value = String(document.getElementById("foto_feo").value).replace(",", ".");
+  document.getElementById("mno").value = String(document.getElementById("foto_mno").value).replace(",", ".");
+  document.getElementById("mgo").value = String(document.getElementById("foto_mgo").value).replace(",", ".");
 
-calcConverter()
-calcSlag()
-
+  document.getElementById("fotoDataInfo").innerText = "Fotodaten wurden in die Schlackenprobe übernommen.";
 }
 
+function analyseFotoDirekt(){
+  uebernehmeFotoDaten();
+  analyseSlag();
+}
+
+function analyseSlag(){
+  const cao = num("cao");
+  const sio2 = num("sio2");
+  const al = num("al2o3");
+  const feo = num("feo");
+  const mno = num("mno");
+  const mgo = num("mgo");
+  const quality = document.getElementById("qualitySlag").value;
+
+  const targetB2 = quality === "stueck" ? 1.8 : 1.6;
+  const b2 = al > 0 ? (cao / al) : 0;
+  const feMn = feo + mno;
+
+  document.getElementById("b2Value").innerText = b2.toFixed(2);
+  document.getElementById("feMnValue").innerText = feMn.toFixed(2);
+
+  const neededCaoPercent = targetB2 * al;
+  const diffCao = neededCaoPercent - cao;
+
+  let kalkKg = 0;
+  let casKg = 0;
+
+  if(diffCao > 0){
+    kalkKg = diffCao * 35;
+  }else{
+    casKg = Math.abs(diffCao) * 12;
+  }
+
+  if(feMn > 1.0){
+    casKg += 150;
+  }
+
+  if(mgo < 6){
+    kalkKg += 100;
+  }
+
+  if(kalkKg < 0) kalkKg = 0;
+  if(casKg < 0) casKg = 0;
+
+  document.getElementById("cas_empf").innerText = formatKg(casKg);
+  document.getElementById("kalk_empf").innerText = formatKg(kalkKg);
+
+  const ampel = document.getElementById("ampel");
+  let ampelText = "";
+  let ampelClass = "";
+  let note = "";
+
+  if(b2 < targetB2 - 0.15){
+    ampelText = "Zu sauer";
+    ampelClass = "bad";
+    note += "CaO/Al2O3 liegt unter Ziel. Kalk erhöhen.\n";
+  }else if(b2 > targetB2 + 0.15){
+    ampelText = "Zu basisch";
+    ampelClass = "warn";
+    note += "CaO/Al2O3 liegt über Ziel. Eher CAS-35 bzw. Tonerdeanteil anheben.\n";
+  }else{
+    ampelText = "Im Ziel";
+    ampelClass = "ok";
+    note += "B2 liegt im Zielbereich.\n";
+  }
+
+  if(feMn > 1.0){
+    note += "FeO + MnO ist erhöht. Schlacke eher oxidisch. Erst beruhigen, dann sauber aufbauen.\n";
+  }else{
+    note += "FeO + MnO ist gut für Entschwefelung.\n";
+  }
+
+  if(quality === "stueck"){
+    note += "Stückverzinker aktiv: Zielwert 1.8 wird verwendet.\n";
+  }else{
+    note += "Normalqualität aktiv: Zielwert 1.6 wird verwendet.\n";
+  }
+
+  note += "Empfehlung basiert auf aktueller Probe und gespeicherter PF-Logik.";
+
+  ampel.className = "ampel " + ampelClass;
+  ampel.innerText = ampelText;
+  document.getElementById("analysisNote").innerText = note;
+
+  renderOxideTable(cao, sio2, al, feo, mno, mgo, targetB2, b2, feMn);
+}
+
+function renderOxideTable(cao, sio2, al, feo, mno, mgo, targetB2, b2, feMn){
+  const tbody = document.getElementById("oxideTableBody");
+
+  const rows = [
+    ["CaO", cao.toFixed(2) + " %", "abhängig von B2", cao >= 45 ? "ok" : "niedrig"],
+    ["SiO2", sio2.toFixed(2) + " %", "möglichst niedrig", sio2 <= 10 ? "ok" : "hoch"],
+    ["Al2O3", al.toFixed(2) + " %", "für B2 relevant", al >= 15 ? "ok" : "niedrig"],
+    ["FeO", feo.toFixed(2) + " %", "< 1.0", feo < 1 ? "ok" : "hoch"],
+    ["MnO", mno.toFixed(2) + " %", "< 1.0", mno < 1 ? "ok" : "hoch"],
+    ["MgO", mgo.toFixed(2) + " %", "6 - 9", mgo >= 6 && mgo <= 9 ? "ok" : "prüfen"],
+    ["B2 (CaO/Al2O3)", b2.toFixed(2), String(targetB2.toFixed(2)), Math.abs(b2 - targetB2) <= 0.15 ? "ok" : "abweichung"],
+    ["FeO + MnO", feMn.toFixed(2), "< 1.0", feMn < 1 ? "ok" : "hoch"]
+  ];
+
+  tbody.innerHTML = rows.map(row => {
+    let cls = "warn";
+    if(row[3] === "ok") cls = "ok";
+    if(row[3] === "hoch" || row[3] === "niedrig" || row[3] === "abweichung") cls = "bad";
+    if(row[3] === "prüfen") cls = "warn";
+
+    return `
+      <tr>
+        <td>${row[0]}</td>
+        <td>${row[1]}</td>
+        <td>${row[2]}</td>
+        <td class="${cls}">${row[3]}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+calcConverter();
+analyseSlag();
 </script>
-
 </body>
 </html>
